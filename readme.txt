@@ -1,5 +1,5 @@
-This is a data science project I created to scrape marathon times, weather data, and elevation data in order to predict marathon times.
+This is a data science project I created to scrape marathon times, weather data, and elevation data in order to predict marathon times. Data for around 400 marathon instances represented the aggregation of around 20 races from year 2000 to 2022. Linear and tree-based regressors are used to model the average run times, female win times, and male win times. Ridge model coefficients for average run times are extracted to help the typical runner adjust their pacing plan to account for their race day conditions and run a smart race.
 
-The data visualization and predictive modeling is contained in the MarathonPredictor.ipynb jupyter notebook. You will also need the most recent data table csv from the full_df_csvs folder.
+The data visualization and predictive modeling is contained in the MarathonPredictor.ipynb jupyter notebook. You will also need my most recent data table csv from the full_df_csvs folder.
 
 If you are interested in my code for scraping data and compiling my data set, please take a look at the MarathonDataCollection.ipynb jupyter notebook.
