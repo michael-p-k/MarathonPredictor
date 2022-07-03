@@ -20,13 +20,13 @@ __Objective 2:__ Are marathon win times similarly connected to weather condition
 
 __Objective 3:__ How can an average runner adjust their pacing plan to account for race day conditions and run a smart marathon?
 
-I first compiled a data set by scraping marathon race results and course elevation profile metrics from the web and joined corresponding weather data queried from a NOAA database. This involved regex, beautiful soup, selenium, and a lot of data cleaning. (See
+I first compiled a data set by scraping marathon race results and course elevation profile metrics from the web and joined corresponding weather data queried from a NOAA database. This involved regex, beautiful soup, selenium, and a lot of data cleaning. (See MarathonDataCollection.ipynb if interested in the details.)
 
 ---
 
 ### Exploratory Data Analysis
 
-Some selected data visualizations are shown here. Not all input variables are expected to affect individual times, but they are still included to help account for the variances in average times and win times. Violin plots of average marathon time by event show clear trends, which are likely tied to weather/climate and race course elevation profile. Additional violin plots for female win time by event and male win time by event are included in the appendix.
+The main notebook MarathonPredictor.ipynb contains the code for modeling, data analysis, and figures. Some selected data visualizations are shown here. Not all input variables are expected to affect individual times, but they are still included to help account for the variances in average times and win times. Violin plots of average marathon time by event show clear trends, which are likely tied to weather/climate and race course elevation profile. Additional violin plots for female win time by event and male win time by event are included in the appendix.
 
 ![Image](figures/Ave_by_event.png)
 
