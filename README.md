@@ -2,7 +2,7 @@
 
 ### Overview
 
-This is a data science project I created to model marathon times using weather data and elevation data as input features. I scraped data for around 400 marathon instances representing the aggregation of around 20 races from years 2000 to 2022. Regularized linear regression and tree ensemble regression are used to model the average run times, female win times, and male win times. Ridge model coefficients for average run times are extracted to help the typical runner adjust their pacing plan to account for their race day conditions and run a smart race.
+This is a data science project I created to model marathon times using weather data and elevation data as input features. I scraped data for over 400 marathon instances representing the aggregation of 20 races from years 2000 to 2022. Regularized linear regression and tree ensemble regression are used to model the average run times, female win times, and male win times. Ridge model coefficients for average run times are extracted to help the typical runner adjust their pacing plan to account for their race day conditions and run a smart race.
 
 If you are interested in my code for __scraping data and compiling__ my original data set, please take a look at the __MarathonDataCollection.ipynb__ jupyter notebook.
 
@@ -44,7 +44,7 @@ The average marathon times were modeled with different types of regressors: line
 
 #### Table 1: Model Performance
 
-|   Model | Best Params  |   Train R$^2$ |   Test R$^2$ |   CV R$^2$ mean |   CV R$^2$ stdev |   Train RMSE |   Test RMSE |   Train Split stdev |   Test Split stdev |
+|   Model | Best Params  |   Train R<sup>2</sup> |   Test R<sup>2</sup> |   CV R<sup>2</sup> mean |   CV R<sup>2</sup> stdev |   Train RMSE |   Test RMSE |   Train Split stdev |   Test Split stdev |
 |----------:|:-----------|:-----------:|:----------:|:--------:|:-----------:|:----------:|:------------:|:-------------:|:------------:|
 | Ridge Ave                | [{'alpha': 0.1}]                                              |   0.770101 |  0.760004 |     0.720597 |     0.0383809 |     14.1206  |    16.0569  |            29.4499  |           32.7762  |
 | Lasso Ave                | [{'alpha': 1}]                                                |   0.769705 |  0.760624 |     0.723293 |     0.0386154 |     14.1327  |    16.0361  |            29.4499  |           32.7762  |
@@ -57,12 +57,12 @@ The average marathon times were modeled with different types of regressors: line
 | Random Forest Male Win   | [{'max_features': 0.2, 'max_samples': 1.0}]                   |   0.974109 |  __0.86465__  |     0.790649 |     0.0434219 |      1.31976 |     3.04506 |             8.20205 |            8.27689 |
 
 
-For average marathon times, the best model tested here was the random forest regressor with an R$^2$ of 0.94 for the test data split, indicating the vast majority of the variation in average marathon run times could be predicted based on the input variables, including weather, elevation, and location. R$^2$ values for 5-fold cross-validation showed a st. dev. <0.02, which suggests this high model performance holds steady on previously unseen data. The gradient boosting tree ensemble showed similarly strong performance, so these fits for these two tree ensembles are plotted below.
+For average marathon times, the best model tested here was the random forest regressor with an R<sup>2</sup> of 0.94 for the test data split, indicating the vast majority of the variation in average marathon run times could be predicted based on the input variables, including weather, elevation, and location. R<sup>2</sup> values for 5-fold cross-validation showed a st. dev. <0.02, which suggests this high model performance holds steady on previously unseen data. The gradient boosting tree ensemble showed similarly strong performance, so these fits for these two tree ensembles are plotted below.
 
 #### Tree Ensemble Plots: Ave Times
 ![Image](figures/Ave_Tree_Models.png)
 
-Linear models (including ridge regression and lasso regression) each had a test split R$^2$ of 0.76, so these methods were less capable of predicting the variation in average run times. Linear models likely show lower performance for this data set because some of the important input variables are not expected to have linear effects on race times. For example, each race location (described by latitude and longitude) tends to attract a different population of marathon runners due to factors like race reputation or proximity to home. Tree-based methods are better able to learn and account for these effects, which are more categorical in nature.
+Linear models (including ridge regression and lasso regression) each had a test split R<sup>2</sup> of 0.76, so these methods were less capable of predicting the variation in average run times. Linear models likely show lower performance for this data set because some of the important input variables are not expected to have linear effects on race times. For example, each race location (described by latitude and longitude) tends to attract a different population of marathon runners due to factors like race reputation or proximity to home. Tree-based methods are better able to learn and account for these effects, which are more categorical in nature.
 
 ---
 
@@ -70,9 +70,9 @@ Linear models (including ridge regression and lasso regression) each had a test 
 
 Female and male win times were modeled with random forests and ridge regressors. Random forests were tested because this model type had the best performance of all regressors tested for average times. Ridge regressor was also included because linear models are easy to interpret based on variable coefficients (we will make use of this for objective 3). Hyperparameters for each model were tuned using grid search with 5-fold cross-validation of the training split, like with the ave time models.
 
-As shown above in Table 1, random forest regressors were the better models for win times, with R$^2$ values of 0.82 for women and 0.86 for men. The random forest models ave times, female wins, and male wins are all plotted together below. (Individual plots for just female win times and just male win times are included in the appendix.) In comparison, the ridge regressors scored 0.54 for women and 0.60 for men. These scores for win time models are lower than the respective R$^2$ values for average times, and this is likely related to differences in observed time variances.
+As shown above in Table 1, random forest regressors were the better models for win times, with R<sup>2</sup> values of 0.82 for women and 0.86 for men. The random forest models ave times, female wins, and male wins are all plotted together below. (Individual plots for just female win times and just male win times are included in the appendix.) In comparison, the ridge regressors scored 0.54 for women and 0.60 for men. These scores for win time models are lower than the respective R<sup>2</sup> values for average times, and this is likely related to differences in observed time variances.
 
-In general, female win times and male win times show less variance than average run times. One likely explanation is that typical marathon runners are strongly affected by adverse weather and hilly courses, creating a large amount of variance in observed average marathon times. In comparison,  elite runners are better able to adapt to conditions and perform consistently, leading to low variance in win times. As such, weather and course conditions were able to predict a smaller proportion of variance for win times than for average run times, as reflected in the R$^2$ scores. In order to explain a larger proportion of win time variance, other variables could be considered, such as scheduling conflicts with competing races (Olympic Games, Olympic Trials, prestigeous marathons) and prize money.
+In general, female win times and male win times show less variance than average run times. One likely explanation is that typical marathon runners are strongly affected by adverse weather and hilly courses, creating a large amount of variance in observed average marathon times. In comparison,  elite runners are better able to adapt to conditions and perform consistently, leading to low variance in win times. As such, weather and course conditions were able to predict a smaller proportion of variance for win times than for average run times, as reflected in the R<sup>2</sup> scores. In order to explain a larger proportion of win time variance, other variables could be considered, such as scheduling conflicts with competing races (Olympic Games, Olympic Trials, prestigeous marathons) and prize money.
 
 #### Random Forest Plots: Win Times
 ![Image](figures/Random_Forests_plots.png)
