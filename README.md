@@ -18,7 +18,7 @@ __Objective 1:__ Are variations in average marathon times connected to weather c
 
 __Objective 2:__ Are marathon win times similarly connected to weather conditions and elevation changes?
 
-__Objective 3:__ How can an average runner adjust their pacing plan to account for race day conditions and run a smart marathon?
+__Objective 3:__ How can runners adjust their pacing plan to account for race day conditions and run a smart marathon?
 
 I first compiled a data set by scraping marathon race results and course elevation profile metrics from the web and joined corresponding weather data queried from a NOAA database. This involved regex, beautiful soup, selenium, and a lot of data cleaning. (See MarathonDataCollection.ipynb if interested in the details.)
 
@@ -26,7 +26,7 @@ I first compiled a data set by scraping marathon race results and course elevati
 
 ### Exploratory Data Analysis
 
-The main notebook MarathonPredictor.ipynb contains the code for modeling, data analysis, and figures. Some selected data visualizations are shown here. Not all input variables are expected to affect individual times, but they are still included to help account for the variances in average times and win times. Violin plots of average marathon time by event show clear trends, which are likely tied to weather/climate and race course elevation profile. Additional violin plots for female win time by event and male win time by event are included in the appendix.
+The main notebook MarathonPredictor.ipynb contains the code for modeling, data analysis, and figures. Some selected data visualizations are shown here. Not all input variables are expected to affect individual times, but they are still included during modeling to help account for the variances in average times and win times. Violin plots of average marathon time by event show clear trends, which are likely tied to weather/climate, race course elevation profile, and the unique sampling of runners each event typically attracts. Additional violin plots for female win time by event and male win time by event are included in the appendix.
 
 ![Image](figures/Ave_by_event.png)
 
@@ -40,27 +40,26 @@ The main notebook MarathonPredictor.ipynb contains the code for modeling, data a
 
 ### Objective 1: Modeling Average Marathon Times
 
-The average marathon times were modeled with different types of regressors: linear, ridge, lasso, gradient boosting decision tree, and random forest. Model training and testing used a random 75%/25% split of the data set. Since linear models are sensitive to large differences in scale for input variables, a normal scaler transformation based on training split mean and st. dev. was applied to each input variable for linear models. (Tree-based models did not need this type of feature scaling.) Grid searches with 5-fold cross validation were used on the training split to select the best hyperparameters for each model. The modeling performance results are summarized below in Table 1.
+The average marathon times were modeled with different types of regressors: linear, ridge, lasso, gradient boosting decision tree, and random forest. Model training and testing used a random 75%/25% split of the data set. Since regularized linear models are sensitive to large differences in scale for input variables, a normal scaler transformation based on training split mean and st. dev. was applied to each input variable for ridge and lasso models using a pipeline. (Tree-based models did not need this type of feature scaling.) Grid searches with 5-fold cross validation were used on the training split to select the best hyperparameters for each model. The modeling performance results are summarized below in Table 1.
 
 #### Table 1: Model Performance
 
 |   Model | Best Params  |   Train R<sup>2</sup> |   Test R<sup>2</sup> |   CV R<sup>2</sup> mean |   CV R<sup>2</sup> stdev |   Train RMSE |   Test RMSE |   Train Split stdev |   Test Split stdev |
 |----------:|:-----------|:-----------:|:----------:|:--------:|:-----------:|:----------:|:------------:|:-------------:|:------------:|
-| Ridge Ave                | [{'alpha': 0.1}]                                              |   0.770101 |  0.760004 |     0.720597 |     0.0383809 |     14.1206  |    16.0569  |            29.4499  |           32.7762  |
-| Lasso Ave                | [{'alpha': 1}]                                                |   0.769705 |  0.760624 |     0.723293 |     0.0386154 |     14.1327  |    16.0361  |            29.4499  |           32.7762  |
-| Linear Ave               | N/A                                                           |   0.772337 |  0.761092 |     0.696343 |     0.0487966 |     14.0517  |    16.0204  |            29.4499  |           32.7762  |
+| Ridge Ave                | [{'ridge_ave__alpha': 0.1}]                                   |   0.770101 |  0.760004 |     0.720239 |     0.0378536 |     14.1206  |    16.0569  |            29.4499  |           32.7762  |
+| Lasso Ave                | [{'lasso_ave__alpha': 1}]                                     |   0.769822 |  0.760795 |     0.723282 |     0.0379843 |     14.1291  |    16.0304  |            29.4499  |           32.7762  |
+| Linear Ave               | nan                                                           |   0.772337 |  0.761092 |     0.696343 |     0.0487966 |     14.0517  |    16.0204  |            29.4499  |           32.7762  |
 | Gradient Boosting Ave    | [{'learning_rate': 0.2, 'max_depth': 1, 'n_estimators': 250}] |   0.976153 |  0.93377  |     0.936253 |     0.018465  |      4.54782 |     8.43501 |            29.4499  |           32.7762  |
 | Random Forest Ave        | [{'max_features': 0.6, 'max_samples': 1.0}]                   |   0.993026 |  __0.949048__ |     0.941806 |     0.016268  |      2.45943 |     7.3984  |            29.4499  |           32.7762  |
-| Ridge Female Win         | [{'alpha': 0.01}]                                             |   0.48608  |  0.545343 |     0.432089 |     0.074542  |      8.77589 |     8.43108 |            12.2417  |           12.5038  |
+| Ridge Female Win         | [{'ridge_female__alpha': 0.01}]                               |   0.48608  |  0.545343 |     0.432018 |     0.0746134 |      8.77589 |     8.43108 |            12.2417  |           12.5038  |
 | Random Forest Female Win | [{'max_features': 0.3, 'max_samples': 1.0}]                   |   0.972522 |  __0.822653__ |     0.795746 |     0.0351898 |      2.02924 |     5.26566 |            12.2417  |           12.5038  |
-| Ridge Male Win           | [{'alpha': 0.01}]                                             |   0.508736 |  0.605073 |     0.440895 |     0.0518985 |      5.74884 |     5.20146 |             8.20205 |            8.27689 |
+| Ridge Male Win           | [{'ridge_male__alpha': 0.01}]                                 |   0.508736 |  0.605073 |     0.440888 |     0.0519293 |      5.74884 |     5.20146 |             8.20205 |            8.27689 |
 | Random Forest Male Win   | [{'max_features': 0.2, 'max_samples': 1.0}]                   |   0.974109 |  __0.86465__  |     0.790649 |     0.0434219 |      1.31976 |     3.04506 |             8.20205 |            8.27689 |
 
+For average marathon times, the best model tested here was the random forest regressor with an R<sup>2</sup> of 0.94 for the test data split, indicating the vast majority of the variation in average marathon run times could be predicted based on the input variables, including weather, elevation, and location. R<sup>2</sup> values for 5-fold cross-validation showed a st. dev. <0.02, which suggests this high model performance holds steady on previously unseen data. The performance for the average marathon time random forest model is plotted below.
 
-For average marathon times, the best model tested here was the random forest regressor with an R<sup>2</sup> of 0.94 for the test data split, indicating the vast majority of the variation in average marathon run times could be predicted based on the input variables, including weather, elevation, and location. R<sup>2</sup> values for 5-fold cross-validation showed a st. dev. <0.02, which suggests this high model performance holds steady on previously unseen data. The gradient boosting tree ensemble showed similarly strong performance, so these fits for these two tree ensembles are plotted below.
-
-#### Tree Ensemble Plots: Ave Times
-![Image](figures/Ave_Tree_Models.png)
+#### Random Forest Plots: Ave Times
+![Image](figures/Ave_Random_Forest.png)
 
 Linear models (including ridge regression and lasso regression) each had a test split R<sup>2</sup> of 0.76, so these methods were less capable of predicting the variation in average run times. Linear models likely show lower performance for this data set because some of the important input variables are not expected to have linear effects on race times. For example, each race location (described by latitude and longitude) tends to attract a different population of marathon runners due to factors like race reputation or proximity to home. Tree-based methods are better able to learn and account for these effects, which are more categorical in nature.
 
@@ -68,7 +67,7 @@ Linear models (including ridge regression and lasso regression) each had a test 
 
 ### Objective 2: Modeling Marathon Win Times
 
-Female and male win times were modeled with random forests and ridge regressors. Random forests were tested because this model type had the best performance of all regressors tested for average times. Ridge regressor was also included because linear models are easy to interpret based on variable coefficients (we will make use of this for objective 3). Hyperparameters for each model were tuned using grid search with 5-fold cross-validation of the training split, like with the ave time models.
+Female and male win times were modeled with random forests and ridge regressors. Random forests were tested because this model type had the best performance of all regressors tested for average times. Ridge regressor was also included because linear models are easy to interpret based on variable coefficients (we will make use of this for objective 3). Hyperparameters for each model were tuned using grid search with 5-fold cross-validation of the training split, like with the ave time models. As before, the ridge model also used a normal scaler pipeline.
 
 As shown above in Table 1, random forest regressors were the better models for win times, with R<sup>2</sup> values of 0.82 for women and 0.86 for men. The random forest models ave times, female wins, and male wins are all plotted together below. (Individual plots for just female win times and just male win times are included in the appendix.) In comparison, the ridge regressors scored 0.54 for women and 0.60 for men. These scores for win time models are lower than the respective R<sup>2</sup> values for average times, and this is likely related to differences in observed time variances.
 
@@ -81,7 +80,7 @@ In general, female win times and male win times show less variance than average 
 
 ### Objective 3: Quantifying Effects of Race Conditions
 
-Many marathon runners have faced challenging race conditions, including hot temperatures and hilly courses. Pacing goals should be adjusted based on these factors to ensure runner start their races at a sustainable speed and are less likely to resign to walking the last several miles. The modeling of this data set can offer some rough guidance in adjusting pacing plans for an average marathoner.
+Many marathon runners have faced challenging race conditions, including hot temperatures and hilly courses. Pacing goals should be adjusted based on these factors to ensure runner start their races at a sustainable speed and are less likely to resign to walking the last several miles. The modeling of this data set can offer some rough guidance in adjusting marathon pacing plans.
 
 While linear models did not perform as well as tree-based methods for this data set, they are still able to account for the majority of run time variance and offer interpretable results via the model coefficients. Prior to fitting the linear models, input variables were each normalized using a standard scaler. After fitting, each coefficient was transformed back into original units based on the respective variable's st. dev. Unscaled coefficients for the ridge model are listed below for some variables that runners might want to account for. (A slightly faster than average runner would likely want to make adjustments somewhere between the values for ave times and win times.)
 
